@@ -1,0 +1,31 @@
+graph LR
+    subgraph "📥 Daily Input"
+        A[📋 1200 Applications/Day]
+    end
+    
+    subgraph "👤 Alex's Model"
+        A --> B[🔧 Fix & Clean Data]
+        B --> C[🎯 Predict Claims]
+        C --> D[💰 Calculate Reserves]
+    end
+    
+    subgraph "📊 Trevor's Dashboard"
+        D --> E[✅ LOW RISK]
+        D --> F[⚠️ MEDIUM RISK]
+        D --> G[🚨 HIGH RISK]
+    end
+    
+    subgraph "🔄 Monthly Update"
+        H[📈 New Data] --> I[🔄 Update Model]
+        I --> C
+    end
+    
+    style A fill:#1e3a5f,stroke:#4a90e2,color:#ffffff
+    style B fill:#2d4a2b,stroke:#66bb6a,color:#ffffff
+    style C fill:#4a2c4a,stroke:#ba68c8,color:#ffffff
+    style D fill:#5d4037,stroke:#ff9800,color:#ffffff
+    style E fill:#1b5e20,stroke:#4caf50,color:#ffffff
+    style F fill:#f57f17,stroke:#ffeb3b,color:#000000
+    style G fill:#b71c1c,stroke:#f44336,color:#ffffff
+    style H fill:#263238,stroke:#607d8b,color:#ffffff
+    style I fill:#1a237e,stroke:#3f51b5,color:#ffffff
