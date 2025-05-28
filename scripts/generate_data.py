@@ -26,7 +26,7 @@ def collect_from_database(query: str) -> pd.DataFrame:
     # Step 1: Generate base features using sklearn
     features, labels = make_classification(
         n_samples=n_rows,
-        n_features=16,
+        n_features=n_features,
         n_informative=7,
         n_redundant=4,
         n_repeated=3,
