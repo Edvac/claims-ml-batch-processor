@@ -1,12 +1,7 @@
-# scripts/generate_data.py - Step 1: Basic Structure
-
-
 import pandas as pd
-import numpy as np
-import string
 from pathlib import Path
 from sklearn.datasets import make_classification
-from sklearn.preprocessing import MinMaxScaler
+
 
 
 def collect_from_database(query: str) -> pd.DataFrame:
