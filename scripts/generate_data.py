@@ -1,8 +1,5 @@
 # scripts/generate_data.py - Step 1: Basic Structure
-"""
-Step 1: Extract Alex's basic data generation structure
-Preserving his original logic - fixes come later
-"""
+
 
 import pandas as pd
 import numpy as np
@@ -17,6 +14,10 @@ def collect_from_database(query: str) -> pd.DataFrame:
     Alex's original data generation function - extracted as-is.
     This simulates pulling from a SQL database (Alex's comment).
     """
+    # Basic input validation
+    if not query or not isinstance(query, str):
+        raise ValueError("Query must be a non-empty string")
+
     print(f"Executing: {query}")
 
     # Alex's original parameters
