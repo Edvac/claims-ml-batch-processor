@@ -124,9 +124,14 @@ def plot_feature_importance(model):
     """
     Alex's feature importance plotting.
     """
-    fig1, ax1 = plt.subplots(figsize=(12, 6))
-    xgb.plot_importance(model, ax=ax1)
-    plt.show()
+    # Plot error handling
+    try:
+        fig1, ax1 = plt.subplots(figsize=(12, 6))
+        xgb.plot_importance(model, ax=ax1)
+        plt.show()
+    except Exception as e:
+        print(f"CRITICAL ERROR: Failed to plot feature importance: {e}")
+
 
 
 def plot_model_tree(model):
