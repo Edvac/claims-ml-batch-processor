@@ -2,8 +2,7 @@
 Alex's model operations from notebook.
 
 Alex used direct XGBoost operations throughout his notebook for model loading,
-prediction, and saving. These minimal functions preserve his exact patterns
-while making them reusable across modules.
+prediction, and saving. 
 """
 
 import pandas as pd
@@ -28,12 +27,18 @@ def load_model(model_path=None):
             # Alex's basic model filename
             model_path = models_dir / "xgboost_model.json"
 
+    # Better error handling with added checks to prevent silent failures and batch job crashes.
     if Path(model_path).exists():
-        # Alex's loading approach
-        model = xgb.XGBClassifier()
-        model.load_model(str(model_path))
-        return model
+        try:
+            # Alex's loading approach
+            model = xgb.XGBClassifier()
+            model.load_model(str(model_path))
+            return model
+        except Exception as e:
+            print(f"CRITICAL ERROR: Could not load model from {model_path}: {e}")
+            return None
     else:
+        print(f"CRITICAL ERROR: Model file not found at {model_path}")
         return None
 
 
@@ -42,14 +47,24 @@ def save_model(model, filepath):
     Alex's model saving pattern.
     Direct XGBoost save_model call.
     """
-    model.save_model(filepath)
+    # Better error handling with added checks to prevent silent failures and batch job crashes.
+    try:
+        Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+        model.save_model(filepath)
+    except Exception as e:
+        print(f"CRITICAL ERROR: Could not save model to {filepath}: {e}")
+        raise
 
 
 def predict_claims(model, X_data):
     """
     Alex's prediction patterns.
-    He always used [:, 1] for probabilities to get positive class only.
+    Used [:, 1] for probabilities to get positive class only.
     """
+
+    if model is None:
+        raise ValueError("CRITICAL ERROR: Model is None, cannot make predictions. Check your model path and try again.")
+
     class_predictions = model.predict(X_data)
     prob_predictions = model.predict_proba(X_data)[:, 1]
     return class_predictions, prob_predictions

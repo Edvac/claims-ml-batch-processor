@@ -13,15 +13,20 @@ from scipy import stats
 from pathlib import Path
 
 
-def prepare_training_data(dataset_from_database):
+def prepare_training_data(processed_data: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame):
     """
     Alex's data preparation for training.
     """
-    # Alex's feature/target separation
-    X, y = dataset_from_database.drop('claim_status', axis=1), dataset_from_database[['claim_status']]
 
-    # Alex's train/test split
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1889)
+    # Add validation for the targeyt column
+    if 'claim_status' not in processed_data.columns:
+        raise ValueError("CRITICAL ERROR: Target column 'claim_status' not found in processed data")
+
+    # Alex's feature/target separation
+    X, y = processed_data.drop('claim_status', axis=1), processed_data[['claim_status']]
+
+    # Flatten the one column 2D array (n_samples, 1) to prevent sklearn and XGBoost shape warnings
+    X_train, X_test, y_train, y_test = train_test_split(X, y.values.ravel(), test_size=0.2, random_state=1889)
 
     return X_train, X_test, y_train, y_test
 
@@ -41,13 +46,20 @@ def train_basic_model(X_train, y_train, X_test, y_test):
         enable_categorical=True
     )
 
-    # Alex's training approach
-    model.fit(X_test, y_test, eval_set=eval_set, verbose=10)
 
-    # Alex's model saving
-    models_dir = Path(__file__).parent.parent / "models"
-    models_dir.mkdir(exist_ok=True)
-    model.save_model(str(models_dir / "xgboost_model.json"))
+    # Change training to train set as it is meant to be used (inconsistencies with cv train)+ avoid data leakage
+    model.fit(X_train, y_train, eval_set=eval_set, verbose=10)
+
+    # Add error handling for model saving
+    try:
+        models_dir = Path(__file__).parent.parent / "models"
+        models_dir.mkdir(exist_ok=True)
+        model_path = models_dir / "xgboost_model.json"
+        model.save_model(str(model_path))
+        print(f"Basic model saved successfully to: {model_path}")
+    except Exception as e:
+        print(f"CRITICAL ERROR: Failed to save basic model: {e}")
+        raise
 
     return model
 
@@ -99,12 +111,19 @@ def train_cv_model(X_train, y_train, X_test, y_test):
         **parameter_gridSearch.best_params_  # Alex's comment: Not sure what this does, from StackOverflow
     )
 
-    # Alex's final model training
+
     model3.fit(X_train, y_train, eval_set=eval_set, verbose=False)
 
-    # Alex's optimized model saving
-    models_dir = Path(__file__).parent.parent / "models"
-    models_dir.mkdir(exist_ok=True)
-    model3.save_model(str(models_dir / "xgboost_model_optimised_with_cross_validation.json"))
+    # Alex's final model training
+    # Add File error handling for model saving
+    try:
+        models_dir = Path(__file__).parent.parent / "models"
+        models_dir.mkdir(exist_ok=True)
+        model_path = models_dir / "xgboost_model_optimised_with_cross_validation.json"
+        model3.save_model(str(model_path))
+        print(f"Optimized model saved successfully to: {model_path}")
+    except Exception as e:
+        print(f"CRITICAL ERROR: Failed to save optimized model: {e}")
+        raise
 
     return model3

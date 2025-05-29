@@ -5,9 +5,8 @@ Alex used comprehensive evaluation metrics including Cohen Kappa, accuracy,
 confusion matrices, ROC curves, and feature importance plotting.
 """
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import xgboost as xgb
 from sklearn.metrics import cohen_kappa_score, accuracy_score, f1_score, precision_score, recall_score, \
     confusion_matrix, roc_auc_score, log_loss, roc_curve
@@ -18,6 +17,10 @@ def get_model_predictions(model, X_train, X_test):
     Alex's prediction pattern for evaluation.
     He always got both class and probability predictions for train and test.
     """
+    # Model validation
+    if model is None:
+        raise ValueError("CRITICAL ERROR: Model is None, cannot generate predictions. Check model loading.")
+
     train_class_preds = model.predict(X_train)
     test_class_preds = model.predict(X_test)
     train_prob_preds = model.predict_proba(X_train)[:, 1]
@@ -30,6 +33,10 @@ def calculate_kappa_scores(y_train, y_test, train_class_preds, test_class_preds)
     """
     Alex's Cohen Kappa calculation with his specific array handling.
     """
+    # Empty data validation
+    if len(y_train) == 0 or len(y_test) == 0:
+        raise ValueError("CRITICAL ERROR: Empty dataset provided for kappa calculation")
+
     # Alex's training data kappa calculation
     y = np.array(y_train)
     y = y.astype(int)
@@ -51,6 +58,11 @@ def print_evaluation_metrics(y_train, y_test, train_class_preds, test_class_pred
     """
     Alex's comprehensive evaluation output exactly as he formatted it.
     """
+    # CRITICAL FIX: Array length validation - to avoid incorrect metrics and silent failures
+    if len(y_train) != len(train_class_preds) or len(y_test) != len(test_class_preds):
+        raise ValueError("CRITICAL ERROR: Mismatched array lengths between predictions and targets")
+
+
     # Alex's kappa scores
     training_kappa, test_kappa = calculate_kappa_scores(y_train, y_test, train_class_preds, test_class_preds)
     print(f"The Cohen Kappa score on the training data is: {training_kappa}")
@@ -89,34 +101,49 @@ def plot_roc_curve(y_test, test_prob_preds):
     """
     Alex's ROC curve plotting exactly as he implemented it.
     """
-    print()
-    fpr, tpr, _ = roc_curve(y_test, test_prob_preds)
-    random_fpr, random_tpr, _ = roc_curve(y_test, [0 for _ in range(len(y_test))])
-    fig, ax = plt.subplots(figsize=(8, 6))
-    plt.plot(fpr, tpr, marker='.', label='XGBoost')
-    plt.plot(random_fpr, random_tpr, linestyle='--')
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title("Receiver Operating Curve")
-    plt.show()
+    # Plot error handling
+    try:
+        print()
+        fpr, tpr, _ = roc_curve(y_test, test_prob_preds)
+        random_fpr, random_tpr, _ = roc_curve(y_test, [0 for _ in range(len(y_test))])
+        fig, ax = plt.subplots(figsize=(8, 6))
+        plt.plot(fpr, tpr, marker='.', label='XGBoost')
+        plt.plot(random_fpr, random_tpr, linestyle='--')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title("Receiver Operating Curve")
+        plt.show()
+    except Exception as e:
+        print(f"CRITICAL ERROR: Could not create ROC curve plot: {e}")
+        return
+
+
 
 
 def plot_feature_importance(model):
     """
     Alex's feature importance plotting.
     """
-    fig1, ax1 = plt.subplots(figsize=(12, 6))
-    xgb.plot_importance(model, ax=ax1)
-    plt.show()
+    # Plot error handling
+    try:
+        fig1, ax1 = plt.subplots(figsize=(12, 6))
+        xgb.plot_importance(model, ax=ax1)
+        plt.show()
+    except Exception as e:
+        print(f"CRITICAL ERROR: Failed to plot feature importance: {e}")
+
 
 
 def plot_model_tree(model):
     """
     Alex's model tree plotting.
     """
-    fig2, ax2 = plt.subplots(figsize=(16, 16))
-    xgb.plot_tree(model, rankdir='LR', ax=ax2)
-    plt.show()
+    try:
+        fig2, ax2 = plt.subplots(figsize=(16, 16))
+        xgb.plot_tree(model, rankdir='LR', ax=ax2)
+        plt.show()
+    except Exception as e:
+        print(f"CRITICAL ERROR: Failed to plot model tree: {e}")
 
 
 def evaluate_model(model, X_train, X_test, y_train, y_test):
@@ -125,15 +152,26 @@ def evaluate_model(model, X_train, X_test, y_train, y_test):
     """
     print("Starting model evaluation...")
 
-    # Get predictions
-    train_class_preds, test_class_preds, train_prob_preds, test_prob_preds = get_model_predictions(model, X_train,
-                                                                                                   X_test)
+    # Add input validation for model and datasets
+    if model is None:
+        raise ValueError("CRITICAL ERROR: Model is None, cannot evaluate")
 
-    # Print all metrics
-    print_evaluation_metrics(y_train, y_test, train_class_preds, test_class_preds, train_prob_preds, test_prob_preds)
+    if X_train is None or X_test is None or y_train is None or y_test is None:
+        raise ValueError("CRITICAL ERROR: One or more datasets is None")
 
-    # Plot ROC curve
-    plot_roc_curve(y_test, test_prob_preds)
+    try:
+        # Get predictions
+        train_class_preds, test_class_preds, train_prob_preds, test_prob_preds = get_model_predictions(model, X_train,
+                                                                                                       X_test)
 
-    # Plot feature importance
-    plot_feature_importance(model)
+        # Print all metrics
+        print_evaluation_metrics(y_train, y_test, train_class_preds, test_class_preds, train_prob_preds, test_prob_preds)
+
+        # Plot ROC curve
+        plot_roc_curve(y_test, test_prob_preds)
+
+        # Plot feature importance
+        plot_feature_importance(model)
+    except Exception as e:
+        print(f"CRITICAL ERROR: Model evaluation failed: {e}")
+        raise
