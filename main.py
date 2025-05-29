@@ -226,13 +226,17 @@ def run_simple_pipeline():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="MVP Claims Pipeline")
     parser.add_argument("--train", action="store_true", help="Train model first")
+    parser.add_argument("--batch", type=str, help="Run batch processing on folder/file")
+    parser.add_argument("--pattern", type=str, default="*.csv", help="File pattern for batch processing")
 
     args = parser.parse_args()
 
     if args.train:
-        success = train_model()  # FIXED: was train_model_mvp()
+        success = train_model()
+    elif args.batch:
+        success = run_batch_pipeline(args.batch, args.pattern)
     else:
         success = run_simple_pipeline()
 
-    if not success:
+if not success:
         exit(1)
