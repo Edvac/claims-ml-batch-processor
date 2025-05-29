@@ -46,7 +46,8 @@ def train_basic_model(X_train, y_train, X_test, y_test):
         enable_categorical=True
     )
 
-    # Change training to train set as it is meant to be used + avoid data leakage
+
+    # Change training to train set as it is meant to be used (inconsistencies with cv train)+ avoid data leakage
     model.fit(X_train, y_train, eval_set=eval_set, verbose=10)
 
     # Add error handling for model saving
@@ -111,11 +112,15 @@ def train_cv_model(X_train, y_train, X_test, y_test):
     )
 
     # Alex's final model training
-    model3.fit(X_train, y_train, eval_set=eval_set, verbose=False)
-
-    # Alex's optimized model saving
-    models_dir = Path(__file__).parent.parent / "models"
-    models_dir.mkdir(exist_ok=True)
-    model3.save_model(str(models_dir / "xgboost_model_optimised_with_cross_validation.json"))
+    # Add File error handling for model saving
+    try:
+        models_dir = Path(__file__).parent.parent / "models"
+        models_dir.mkdir(exist_ok=True)
+        model_path = models_dir / "xgboost_model_optimised_with_cross_validation.json"
+        model3.save_model(str(model_path))
+        print(f"Optimized model saved successfully to: {model_path}")
+    except Exception as e:
+        print(f"CRITICAL ERROR: Failed to save optimized model: {e}")
+        raise
 
     return model3
