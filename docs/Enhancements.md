@@ -25,6 +25,11 @@ Replace print statements inhereted from the Jupyter Notebook with logging
 ## Testing
 Add unit testing and Integration tests
 
+## Model monitoring
+Data drift detection, performance tracking
+
+
+
 ## Cloud Deployment
 
 ## ☁️ **Azure Functions Mapping (High Level)**
