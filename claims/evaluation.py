@@ -152,15 +152,26 @@ def evaluate_model(model, X_train, X_test, y_train, y_test):
     """
     print("Starting model evaluation...")
 
-    # Get predictions
-    train_class_preds, test_class_preds, train_prob_preds, test_prob_preds = get_model_predictions(model, X_train,
-                                                                                                   X_test)
+    # Add input validation for model and datasets
+    if model is None:
+        raise ValueError("CRITICAL ERROR: Model is None, cannot evaluate")
 
-    # Print all metrics
-    print_evaluation_metrics(y_train, y_test, train_class_preds, test_class_preds, train_prob_preds, test_prob_preds)
+    if X_train is None or X_test is None or y_train is None or y_test is None:
+        raise ValueError("CRITICAL ERROR: One or more datasets is None")
 
-    # Plot ROC curve
-    plot_roc_curve(y_test, test_prob_preds)
+    try:
+        # Get predictions
+        train_class_preds, test_class_preds, train_prob_preds, test_prob_preds = get_model_predictions(model, X_train,
+                                                                                                       X_test)
 
-    # Plot feature importance
-    plot_feature_importance(model)
+        # Print all metrics
+        print_evaluation_metrics(y_train, y_test, train_class_preds, test_class_preds, train_prob_preds, test_prob_preds)
+
+        # Plot ROC curve
+        plot_roc_curve(y_test, test_prob_preds)
+
+        # Plot feature importance
+        plot_feature_importance(model)
+    except Exception as e:
+        print(f"CRITICAL ERROR: Model evaluation failed: {e}")
+        raise
