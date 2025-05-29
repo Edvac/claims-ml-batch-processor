@@ -9,6 +9,7 @@ Minimal viable pipeline that demonstrates:
 
 Start simple, then enhance.
 """
+import argparse
 
 import pandas as pd
 from pathlib import Path
