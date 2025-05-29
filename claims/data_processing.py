@@ -12,6 +12,9 @@ def process_claims_data(dataset_from_database):
 
     print(f"Processing dataset: {dataset_from_database.shape}")
 
+    if dataset_from_database.empty:
+        raise ValueError("Dataset is empty")
+
 
     total = dataset_from_database.isnull().sum()
     percent = (dataset_from_database.isnull().sum() / dataset_from_database.isnull().count() * 100)
