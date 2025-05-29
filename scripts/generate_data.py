@@ -1,7 +1,6 @@
-# scripts/generate_data.py - Step 1: Basic Structure
 """
-Step 1: Extract Alex's basic data generation structure
-Preserving his original logic - fixes come later
+Alex's complete data generation logic from notebook.
+Includes all business features and transformations.
 """
 
 import pandas as pd
@@ -12,15 +11,15 @@ from sklearn.datasets import make_classification
 from sklearn.preprocessing import MinMaxScaler
 
 
-def collect_from_database(query: str) -> pd.DataFrame:
+def generate_claims_data(n_applications: int) -> pd.DataFrame:
     """
     Alex's original data generation function - extracted as-is.
     This simulates pulling from a SQL database (Alex's comment).
     """
-    print(f"Executing: {query}")
+    print(f"Generating {n_applications} applications...")
 
     # Alex's original parameters
-    n_rows = 10_000
+    n_rows = n_applications
     n_features = 16
 
     # Step 1: Generate base features using sklearn
@@ -159,7 +158,9 @@ def collect_from_database(query: str) -> pd.DataFrame:
     return df
 
 
-def save_sample_data():
+from datetime import datetime
+
+def save_sample_data(n_applications=1200, dataset_type="sample"):
     """Generate and save sample data as CSV for demo purposes."""
 
     # Create data directory if it doesn't exist
@@ -168,10 +169,12 @@ def save_sample_data():
 
     # Generate the dataset using Alex's logic
     print("Generating sample dataset...")
-    df = collect_from_database("SELECT * FROM CLAIMS.DS_DATASET")
+    df = generate_claims_data(n_applications)
 
-    # Save as CSV (simple and compact)
-    output_file = data_dir / "sample_applications.csv"
+    # Use UK date format: DD-MM-YYYY (using hyphens to avoid filesystem issues)
+    date_str = datetime.now().strftime("%d-%m-%Y")
+    output_file = data_dir / f"claims_{dataset_type}_{date_str}_n{n_applications}.csv"
+
     df.to_csv(output_file, index=False)
 
     print(f"Saved {len(df)} applications to {output_file}")
@@ -181,9 +184,9 @@ def save_sample_data():
 
 
 if __name__ == "__main__":
-    # Test Step 1
-    print("Testing Step 1: Basic data generation")
-    df = collect_from_database("SELECT * FROM CLAIMS.DS_DATASET")
+    # Test complete data generation
+    # Test with Trevor's daily batch size
+    df = generate_claims_data(1200)
 
     print(f"Shape: {df.shape}")
     print(f"Columns: {list(df.columns)}")
@@ -193,6 +196,6 @@ if __name__ == "__main__":
 
     # Save the data
     print("\n" + "=" * 50)
-    save_sample_data()
+    save_sample_data(1200)
 
-    print("\nStep 1 completed! Data ready for processing.")
+    print("\nData generation completed! Ready for processing.")
