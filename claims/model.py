@@ -47,14 +47,24 @@ def save_model(model, filepath):
     Alex's model saving pattern.
     Direct XGBoost save_model call.
     """
-    model.save_model(filepath)
+    # Better error handling with added checks to prevent silent failures and batch job crashes.
+    try:
+        Path(filepath).parent.mkdir(parents=True, exist_ok=True)
+        model.save_model(filepath)
+    except Exception as e:
+        print(f"CRITICAL ERROR: Could not save model to {filepath}: {e}")
+        raise
 
 
 def predict_claims(model, X_data):
     """
     Alex's prediction patterns.
-    He always used [:, 1] for probabilities to get positive class only.
+    Used [:, 1] for probabilities to get positive class only.
     """
+
+    if model is None:
+        raise ValueError("CRITICAL ERROR: Model is None, cannot make predictions. Check your model path and try again.")
+
     class_predictions = model.predict(X_data)
     prob_predictions = model.predict_proba(X_data)[:, 1]
     return class_predictions, prob_predictions
