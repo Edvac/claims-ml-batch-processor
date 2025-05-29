@@ -4,10 +4,21 @@
 
 Built from Alex's proven notebook analysis into a scalable batch processing system.
 
-### **Prerequisites**
+## Prerequisites
+
 - Python 3.13+ (recommended)
 - Git
 
+## Dependencies
+
+- matplotlib
+- numpy
+- pandas
+- pillow
+- pytest
+- scikit-learn
+- scipy
+- xgboost
 
 ## Setup
 
@@ -62,3 +73,9 @@ Built from Alex's proven notebook analysis into a scalable batch processing syst
 ## Output
 
 Prediction results will be saved as CSV files in the `outputs/` directory.
+
+## Documentation
+
+- [Future Additions and Improvements](docs/Enchancements.md)
+- [Project Questions](docs/Project_questions.md)
+- [Notebook transforamtion journey](docs/TransformationPipelineOverview.md)
