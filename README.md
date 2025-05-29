@@ -74,6 +74,17 @@ Built from Alex's proven notebook analysis into a scalable batch processing syst
 
 Prediction results will be saved as CSV files in the `outputs/` directory.
 
+## Sample Production Deployment
+
+### Daily Batch Processing
+```bash
+# Setup cron job
+chmod +x scripts/daily_batch.sh
+crontab -e
+# Add: 0 6 * * * /path/to/claims-ml-batch-processor/scripts/daily_batch.sh
+```
+
+
 ## Documentation
 
 - [Future Additions and Improvements](docs/Enchancements.md)

@@ -27,7 +27,7 @@
 *   **In Scope:**
     *   Extract Alex's logic into production Python pipeline
     *   Daily batch prediction service
-    *   Model retraining capability
+    *   Model training capability
     *   Production-ready code structure and documentation
     *   Deployment framework description
 
