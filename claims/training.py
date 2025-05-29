@@ -46,13 +46,19 @@ def train_basic_model(X_train, y_train, X_test, y_test):
         enable_categorical=True
     )
 
-    # Alex's training approach
-    model.fit(X_test, y_test, eval_set=eval_set, verbose=10)
+    # Change training to train set as it is meant to be used + avoid data leakage
+    model.fit(X_train, y_train, eval_set=eval_set, verbose=10)
 
-    # Alex's model saving
-    models_dir = Path(__file__).parent.parent / "models"
-    models_dir.mkdir(exist_ok=True)
-    model.save_model(str(models_dir / "xgboost_model.json"))
+    # Add error handling for model saving
+    try:
+        models_dir = Path(__file__).parent.parent / "models"
+        models_dir.mkdir(exist_ok=True)
+        model_path = models_dir / "xgboost_model.json"
+        model.save_model(str(model_path))
+        print(f"Basic model saved successfully to: {model_path}")
+    except Exception as e:
+        print(f"CRITICAL ERROR: Failed to save basic model: {e}")
+        raise
 
     return model
 
