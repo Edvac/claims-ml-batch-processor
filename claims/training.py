@@ -13,12 +13,17 @@ from scipy import stats
 from pathlib import Path
 
 
-def prepare_training_data(dataset_from_database):
+def prepare_training_data(processed_data: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame):
     """
     Alex's data preparation for training.
     """
+
+    # Add validation for the targeyt column
+    if 'claim_status' not in processed_data.columns:
+        raise ValueError("CRITICAL ERROR: Target column 'claim_status' not found in processed data")
+
     # Alex's feature/target separation
-    X, y = dataset_from_database.drop('claim_status', axis=1), dataset_from_database[['claim_status']]
+    X, y = processed_data.drop('claim_status', axis=1), processed_data[['claim_status']]
 
     # Alex's train/test split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1889)
