@@ -101,6 +101,56 @@ def process_single_file(file_path, model, output_dir):
         print(f"CRITICAL ERROR: Failed to process {file_path}: {e}")
         return False
 
+
+def run_batch_pipeline(input_path, pattern="*.csv"):
+    """
+    CRITICAL: Batch processing for multiple files.
+    """
+    print("=" * 50)
+    print("STARTING BATCH CLAIMS PREDICTION PIPELINE")
+    print("=" * 50)
+
+    try:
+        # Load model once
+        print("Loading model...")
+        model = load_model()
+        if model is None:
+            print("CRITICAL ERROR: No trained model found. Please train a model first.")
+            return False
+
+        # Setup output directory
+        output_dir = Path(__file__).parent / "outputs"
+        output_dir.mkdir(exist_ok=True)
+
+        # Find files to process
+        input_path = Path(input_path)
+        if input_path.is_file():
+            files_to_process = [input_path]
+        else:
+            files_to_process = list(input_path.glob(pattern))
+
+        if not files_to_process:
+            print(f"CRITICAL ERROR: No files found at {input_path} with pattern {pattern}")
+            return False
+
+        print(f"Found {len(files_to_process)} files to process")
+
+        # Process each file
+        successful = 0
+        for file_path in files_to_process:
+            if process_single_file(file_path, model, output_dir):
+                successful += 1
+
+        print("=" * 50)
+        print(f"BATCH PROCESSING COMPLETED: {successful}/{len(files_to_process)} files processed successfully")
+        print("=" * 50)
+
+        return successful > 0
+
+    except Exception as e:
+        print(f"CRITICAL ERROR: Batch pipeline failed: {e}")
+        return False
+
 def run_simple_pipeline():
     """
     Minimal viable pipeline - just the core flow.
