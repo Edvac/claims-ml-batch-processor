@@ -58,6 +58,11 @@ def print_evaluation_metrics(y_train, y_test, train_class_preds, test_class_pred
     """
     Alex's comprehensive evaluation output exactly as he formatted it.
     """
+    # CRITICAL FIX: Array length validation - to avoid incorrect metrics and silent failures
+    if len(y_train) != len(train_class_preds) or len(y_test) != len(test_class_preds):
+        raise ValueError("CRITICAL ERROR: Mismatched array lengths between predictions and targets")
+
+
     # Alex's kappa scores
     training_kappa, test_kappa = calculate_kappa_scores(y_train, y_test, train_class_preds, test_class_preds)
     print(f"The Cohen Kappa score on the training data is: {training_kappa}")
