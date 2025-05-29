@@ -131,6 +131,15 @@ def run_simple_pipeline():
 
 
 if __name__ == "__main__":
-    success = run_simple_pipeline()
+    parser = argparse.ArgumentParser(description="MVP Claims Pipeline")
+    parser.add_argument("--train", action="store_true", help="Train model first")
+
+    args = parser.parse_args()
+
+    if args.train:
+        success = train_model()  # FIXED: was train_model_mvp()
+    else:
+        success = run_simple_pipeline()
+
     if not success:
         exit(1)
