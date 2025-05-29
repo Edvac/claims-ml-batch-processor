@@ -4,6 +4,11 @@
 
 Built from Alex's proven notebook analysis into a scalable batch processing system.
 
+### **Prerequisites**
+- Python 3.13+ (recommended)
+- Git
+
+
 ## Setup
 
 1.  **Clone the repository:**
