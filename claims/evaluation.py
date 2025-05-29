@@ -138,9 +138,12 @@ def plot_model_tree(model):
     """
     Alex's model tree plotting.
     """
-    fig2, ax2 = plt.subplots(figsize=(16, 16))
-    xgb.plot_tree(model, rankdir='LR', ax=ax2)
-    plt.show()
+    try:
+        fig2, ax2 = plt.subplots(figsize=(16, 16))
+        xgb.plot_tree(model, rankdir='LR', ax=ax2)
+        plt.show()
+    except Exception as e:
+        print(f"CRITICAL ERROR: Failed to plot model tree: {e}")
 
 
 def evaluate_model(model, X_train, X_test, y_train, y_test):
