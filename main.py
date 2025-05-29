@@ -59,6 +59,48 @@ def train_model():
     except Exception as e:
         print(f"CRITICAL ERROR: Model training failed: {e}")
         return False
+
+def process_single_file(file_path, model, output_dir):
+    """
+    CRITICAL: Process single file for batch operations.
+    """
+    try:
+        print(f"Processing: {file_path}")
+
+        # Load and process data
+        raw_data = pd.read_csv(file_path)
+        processed_data = process_claims_data(raw_data)
+
+        # Prepare features
+        if 'claim_status' in processed_data.columns:
+            X_data = processed_data.drop('claim_status', axis=1)
+        else:
+            X_data = processed_data
+
+        # Generate predictions
+        class_predictions, prob_predictions = predict_claims(model, X_data)
+
+        # Create results
+        results_df = pd.DataFrame({
+            'application_id': range(1, len(X_data) + 1),
+            'claim_likelihood': prob_predictions,
+            'claim_prediction': class_predictions,
+            'risk_level': ['High' if p > 0.7 else 'Medium' if p > 0.3 else 'Low'
+                           for p in prob_predictions]
+        })
+
+        # Save results
+        file_stem = Path(file_path).stem
+        output_file = output_dir / f"{file_stem}_predictions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        results_df.to_csv(output_file, index=False)
+
+        print(f"  -> Processed {len(X_data)} records, saved to: {output_file}")
+        return True
+
+    except Exception as e:
+        print(f"CRITICAL ERROR: Failed to process {file_path}: {e}")
+        return False
+
 def run_simple_pipeline():
     """
     Minimal viable pipeline - just the core flow.
