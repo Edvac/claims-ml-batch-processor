@@ -65,13 +65,22 @@ def process_claims_data(dataset_from_database):
 
 
 if __name__ == "__main__":
-    # Load and process data when run directly
+
+    # File operation error handling to avoid silent crashes.
     data_path = Path(__file__).parent.parent / "data" / "sample_applications.csv"
-    dataset_from_database = pd.read_csv(data_path)
 
-    processed_data = process_claims_data(dataset_from_database)
+    try:
+        dataset_from_database = pd.read_csv(data_path)
+        processed_data = process_claims_data(dataset_from_database)
 
-    # Save processed data
-    processed_path = Path(__file__).parent.parent / "data" / "processed_applications.csv"
-    processed_data.to_csv(processed_path, index=False)
-    print(f"Saved processed data to: {processed_path}")
+        # Save processed data
+        processed_path = Path(__file__).parent.parent / "data" / "processed_applications.csv"
+        processed_data.to_csv(processed_path, index=False)
+        print(f"Saved processed data to: {processed_path}")
+
+    except FileNotFoundError:
+        print(f"CRITICAL ERROR: Data file not found at {data_path}")
+        exit(1)
+    except Exception as e:
+        print(f"CRITICAL ERROR: {e}")
+        exit(1)
