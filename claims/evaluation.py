@@ -33,6 +33,10 @@ def calculate_kappa_scores(y_train, y_test, train_class_preds, test_class_preds)
     """
     Alex's Cohen Kappa calculation with his specific array handling.
     """
+    # Empty data validation
+    if len(y_train) == 0 or len(y_test) == 0:
+        raise ValueError("CRITICAL ERROR: Empty dataset provided for kappa calculation")
+
     # Alex's training data kappa calculation
     y = np.array(y_train)
     y = y.astype(int)
