@@ -111,6 +111,9 @@ def train_cv_model(X_train, y_train, X_test, y_test):
         **parameter_gridSearch.best_params_  # Alex's comment: Not sure what this does, from StackOverflow
     )
 
+
+    model3.fit(X_train, y_train, eval_set=eval_set, verbose=False)
+
     # Alex's final model training
     # Add File error handling for model saving
     try:
