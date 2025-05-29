@@ -25,8 +25,8 @@ def prepare_training_data(processed_data: pd.DataFrame) -> (pd.DataFrame, pd.Dat
     # Alex's feature/target separation
     X, y = processed_data.drop('claim_status', axis=1), processed_data[['claim_status']]
 
-    # Alex's train/test split
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1889)
+    # Flatten the one column 2D array (n_samples, 1) to prevent sklearn and XGBoost shape warnings
+    X_train, X_test, y_train, y_test = train_test_split(X, y.values.ravel(), test_size=0.2, random_state=1889)
 
     return X_train, X_test, y_train, y_test
 
