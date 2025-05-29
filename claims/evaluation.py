@@ -5,9 +5,8 @@ Alex used comprehensive evaluation metrics including Cohen Kappa, accuracy,
 confusion matrices, ROC curves, and feature importance plotting.
 """
 
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import xgboost as xgb
 from sklearn.metrics import cohen_kappa_score, accuracy_score, f1_score, precision_score, recall_score, \
     confusion_matrix, roc_auc_score, log_loss, roc_curve
@@ -18,6 +17,10 @@ def get_model_predictions(model, X_train, X_test):
     Alex's prediction pattern for evaluation.
     He always got both class and probability predictions for train and test.
     """
+    # Model validation
+    if model is None:
+        raise ValueError("CRITICAL ERROR: Model is None, cannot generate predictions. Check model loading.")
+
     train_class_preds = model.predict(X_train)
     test_class_preds = model.predict(X_test)
     train_prob_preds = model.predict_proba(X_train)[:, 1]
