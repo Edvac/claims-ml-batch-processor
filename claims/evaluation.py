@@ -101,16 +101,23 @@ def plot_roc_curve(y_test, test_prob_preds):
     """
     Alex's ROC curve plotting exactly as he implemented it.
     """
-    print()
-    fpr, tpr, _ = roc_curve(y_test, test_prob_preds)
-    random_fpr, random_tpr, _ = roc_curve(y_test, [0 for _ in range(len(y_test))])
-    fig, ax = plt.subplots(figsize=(8, 6))
-    plt.plot(fpr, tpr, marker='.', label='XGBoost')
-    plt.plot(random_fpr, random_tpr, linestyle='--')
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title("Receiver Operating Curve")
-    plt.show()
+    # Plot error handling
+    try:
+        print()
+        fpr, tpr, _ = roc_curve(y_test, test_prob_preds)
+        random_fpr, random_tpr, _ = roc_curve(y_test, [0 for _ in range(len(y_test))])
+        fig, ax = plt.subplots(figsize=(8, 6))
+        plt.plot(fpr, tpr, marker='.', label='XGBoost')
+        plt.plot(random_fpr, random_tpr, linestyle='--')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title("Receiver Operating Curve")
+        plt.show()
+    except Exception as e:
+        print(f"CRITICAL ERROR: Could not create ROC curve plot: {e}")
+        return
+
+
 
 
 def plot_feature_importance(model):
